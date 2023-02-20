@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Coin Stats</string>
+    <string name="title">Top by market cap</string>
+    <string name="number">#</string>
+    <string name="market_cap">Market cap</string>
+    <string name="price_usd">Price(USD)</string>
+    <string name="change_24h">24h %</string>
+</resources>
