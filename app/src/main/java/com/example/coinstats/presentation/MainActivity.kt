@@ -1,9 +1,8 @@
-package com.example.coinstats
+package com.example.coinstats.presentation
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.LinearLayout
-import android.widget.TextView
+import com.example.coinstats.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
