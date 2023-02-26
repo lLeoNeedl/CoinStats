@@ -1,13 +1,13 @@
 package com.example.coinstats.domain.repository
 
 import androidx.lifecycle.LiveData
-import com.example.coinstats.domain.entities.CoinInfo
+import com.example.coinstats.domain.entities.TopCoin
 
 interface CoinStatsRepository {
 
-    fun getCoinInfoList(): LiveData<List<CoinInfo>>
+    fun getTopCoinList(): LiveData<List<TopCoin>>
 
-    fun getCoinInfo(fromSymbol: String): LiveData<CoinInfo>
+    fun getTopCoin(fromSymbol: String): LiveData<TopCoin>
 
     suspend fun loadData()
 }

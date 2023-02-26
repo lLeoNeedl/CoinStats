@@ -3,8 +3,8 @@ package com.example.coinstats.data.database.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity("top_coins_by_market_cap")
-data class TopCoinsInfoDbModel (
+@Entity(tableName = "favourite_coins")
+data class FavouriteCoinDbModel(
 
     @PrimaryKey
     val fromSymbol: String,
@@ -13,7 +13,7 @@ data class TopCoinsInfoDbModel (
 
     val price: Double,
 
-    val lastUpdate: String,
+    val lastUpdate: Long,
 
     val highDay: Double,
 

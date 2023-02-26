@@ -1,12 +1,7 @@
-package com.example.coinstats.data.database.model
+package com.example.coinstats.domain.entities
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+data class TopCoin(
 
-@Entity("favourite_coins")
-data class FavouriteCoinsDbModel(
-
-    @PrimaryKey
     val fromSymbol: String,
 
     val toSymbol: String,
@@ -22,4 +17,6 @@ data class FavouriteCoinsDbModel(
     val marketCap: Long,
 
     val imageUrl: String
-)
+) {
+
+}

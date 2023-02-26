@@ -2,29 +2,29 @@ package com.example.coinstats.data.network.model
 
 import com.google.gson.annotations.SerializedName
 
-data class CoinInfoDTO(
+data class TopCoinDto(
 
     @SerializedName("FROMSYMBOL")
-    val fromSymbol: String?,
+    val fromSymbol: String? = null,
 
     @SerializedName("TOSYMBOL")
-    val toSymbol: String?,
+    val toSymbol: String? = null,
 
     @SerializedName("PRICE")
-    val price: Double?,
+    val price: Double? = null,
 
     @SerializedName("LASTUPDATE")
-    val lastUpdate: String?,
+    val lastUpdate: Long? = null,
 
     @SerializedName("HIGHDAY")
-    val highDay: Double?,
+    val highDay: Double? = null,
 
     @SerializedName("LOWDAY")
-    val lowDay: Double?,
+    val lowDay: Double? = null,
 
     @SerializedName("MKTCAP")
-    val marketCap: Long?,
+    val marketCap: Long? = null,
 
     @SerializedName("IMAGEURL")
-    val imageUrl: String?
+    val imageUrl: String? = null
 )
