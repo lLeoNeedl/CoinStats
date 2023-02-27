@@ -2,8 +2,8 @@ package com.example.coinstats.data.network.model
 
 import com.google.gson.annotations.SerializedName
 
-data class JsonListContainerDto (
+data class TopCoinsListDto (
 
     @SerializedName("Data")
-    val data: List<JsonContainerDto>? = null
+    val data: List<TopCoinNameContainerDto>? = null
 )

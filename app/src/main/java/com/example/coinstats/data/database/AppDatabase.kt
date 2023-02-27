@@ -5,10 +5,10 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.coinstats.data.database.model.FavouriteCoinDbModel
-import com.example.coinstats.data.database.model.TopCoinDbModel
+import com.example.coinstats.data.database.model.CoinDbModel
 
 @Database(
-    entities = [TopCoinDbModel::class, FavouriteCoinDbModel::class],
+    entities = [CoinDbModel::class, FavouriteCoinDbModel::class],
     version = 1,
     exportSchema = false
 )
@@ -33,7 +33,7 @@ abstract class AppDatabase : RoomDatabase() {
                     application,
                     AppDatabase::class.java,
                     DB_NAME
-                ).build()
+                ).fallbackToDestructiveMigration().build()
                 INSTANCE = db
                 return db
             }

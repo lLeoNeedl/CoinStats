@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "top_coins_by_market_cap")
-data class TopCoinDbModel (
+data class CoinDbModel (
 
     @PrimaryKey
     val fromSymbol: String,

@@ -7,45 +7,52 @@ import androidx.lifecycle.Transformations
 import com.example.coinstats.data.database.AppDatabase
 import com.example.coinstats.data.mapper.CoinStatsMapper
 import com.example.coinstats.data.network.ApiFactory
-import com.example.coinstats.data.network.model.JsonListContainerDto
-import com.example.coinstats.domain.entities.TopCoin
+import com.example.coinstats.data.network.ApiHelper
+import com.example.coinstats.domain.entities.Coin
 import com.example.coinstats.domain.repository.CoinStatsRepository
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.retry
+import kotlinx.coroutines.flow.*
 
 class CoinStatsRepositoryImpl(application: Application) : CoinStatsRepository {
 
     private val topCoinsDao = AppDatabase.getInstance(application).getTopCoinsDao()
-    private val apiService = ApiFactory.apiService
+    private val apiHelper = ApiHelper(ApiFactory.apiService)
     private val mapper = CoinStatsMapper()
+    private val apiService = ApiFactory.apiService
 
-    override fun getTopCoinList(): LiveData<List<TopCoin>> =
+    override fun getTopCoinList(): LiveData<List<Coin>> =
         Transformations.map(topCoinsDao.getTopCoinInfoList()) {
             it.map { mapper.mapTopCoinDbModelToEntity(it) }
         }
 
-    override fun getTopCoin(fromSymbol: String): LiveData<TopCoin> =
+    override fun getTopCoin(fromSymbol: String): LiveData<Coin> =
         Transformations.map(topCoinsDao.getTopCoinInfo(fromSymbol)) {
             mapper.mapTopCoinDbModelToEntity(it)
         }
 
     override suspend fun loadData() {
-        while (true) {
-            val jsonListContainer = apiService.getTopCoins()
-            val topCoinDtoList = mapper.mapJsonContainerToListDto(jsonListContainer)
-            val topCoinDbModelList =
-                topCoinDtoList.map { mapper.mapTopCoinDtoToDbModel(it) }
-            topCoinsDao.insertTopCoins(topCoinDbModelList)
-            delay(10000)
-        }
-    }
-
-    private fun loadDataFromInternet(): Flow<JsonListContainerDto> {
-        return flow {
-            emit(apiService.getTopCoins())
-        }
+        val fromSymbols = mapper.mapNamesListToString(apiService.getTopCoins())
+        apiHelper.getFullPriceList(fromSymbols)
+            .retry()
+            .map {
+                mapper.mapJsonContainerToListDto(it)
+            }
+            .map {
+                it.map { mapper.mapTopCoinDtoToDbModel(it) }
+            }
+            .collect {
+                topCoinsDao.insertTopCoins(it)
+//                Log.d("MyTopCoinsFragment", it.toString())
+            }
+//        while (true) {
+//            val jsonListContainer = ApiFactory.apiService.getTopCoins(limit = 50)
+//            val x = ApiFactory.apiService.getTopCoins(limit = 50)
+//            Log.d("CoinStatsRepositoryImpl", jsonListContainer.data.toString())
+//            Log.d("CoinStatsRepositoryImpl", x.data.toString())
+////            val topCoinDtoList = mapper.mapJsonContainerToListDto(jsonListContainer)
+//            delay(10000)
+//        }
+//        val topCoinDbModelList =
+//            topCoinDtoList.map { mapper.mapTopCoinDtoToDbModel(it) }
+//        topCoinsDao.insertTopCoins(topCoinDbModelList)
     }
 }

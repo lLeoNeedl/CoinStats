@@ -1,6 +1,6 @@
 package com.example.coinstats.domain.entities
 
-data class TopCoin(
+data class Coin(
 
     val fromSymbol: String,
 

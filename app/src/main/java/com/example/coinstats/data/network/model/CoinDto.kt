@@ -2,7 +2,7 @@ package com.example.coinstats.data.network.model
 
 import com.google.gson.annotations.SerializedName
 
-data class TopCoinDto(
+data class CoinDto(
 
     @SerializedName("FROMSYMBOL")
     val fromSymbol: String? = null,

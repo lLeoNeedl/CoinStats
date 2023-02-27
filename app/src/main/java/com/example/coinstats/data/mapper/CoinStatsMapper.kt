@@ -1,9 +1,10 @@
 package com.example.coinstats.data.mapper
 
-import com.example.coinstats.data.database.model.TopCoinDbModel
-import com.example.coinstats.data.network.model.TopCoinDto
-import com.example.coinstats.data.network.model.JsonListContainerDto
-import com.example.coinstats.domain.entities.TopCoin
+import com.example.coinstats.data.database.model.CoinDbModel
+import com.example.coinstats.data.network.model.CoinDto
+import com.example.coinstats.data.network.model.CoinInfoJsonContainerDto
+import com.example.coinstats.data.network.model.TopCoinsListDto
+import com.example.coinstats.domain.entities.Coin
 import com.google.gson.Gson
 import java.sql.Date
 import java.sql.Timestamp
@@ -12,43 +13,47 @@ import java.util.*
 
 class CoinStatsMapper {
 
-    fun mapTopCoinDtoToDbModel(topCoinDto: TopCoinDto) = TopCoinDbModel(
-        fromSymbol = topCoinDto.fromSymbol ?: EMPTY_SYMBOL,
-        toSymbol = topCoinDto.toSymbol ?: EMPTY_SYMBOL,
-        price = topCoinDto.price ?: EMPTY_VALUE,
-        lastUpdate = topCoinDto.lastUpdate ?: EMPTY_VALUE.toLong(),
-        highDay = topCoinDto.highDay ?: EMPTY_VALUE,
-        lowDay = topCoinDto.lowDay ?: EMPTY_VALUE,
-        marketCap = topCoinDto.marketCap ?: EMPTY_VALUE.toLong(),
-        imageUrl = getFullImageUrl(topCoinDto.imageUrl)
+    fun mapTopCoinDtoToDbModel(coinDto: CoinDto) = CoinDbModel(
+        fromSymbol = coinDto.fromSymbol ?: EMPTY_SYMBOL,
+        toSymbol = coinDto.toSymbol ?: EMPTY_SYMBOL,
+        price = coinDto.price ?: EMPTY_VALUE,
+        lastUpdate = coinDto.lastUpdate ?: EMPTY_VALUE.toLong(),
+        highDay = coinDto.highDay ?: EMPTY_VALUE,
+        lowDay = coinDto.lowDay ?: EMPTY_VALUE,
+        marketCap = coinDto.marketCap ?: EMPTY_VALUE.toLong(),
+        imageUrl = getFullImageUrl(coinDto.imageUrl)
     )
 
-    fun mapJsonContainerToListDto(jsonListContainer: JsonListContainerDto): List<TopCoinDto> {
-        val result = mutableListOf<TopCoinDto>()
-        val jsonList = jsonListContainer.data ?: return result
-        for (jsonContainer in jsonList) {
-            val jsonObject = jsonContainer.json ?: return result
-            val currencyKeySet = jsonObject.keySet()
+    fun mapJsonContainerToListDto(jsonContainer: CoinInfoJsonContainerDto): List<CoinDto> {
+        val result = mutableListOf<CoinDto>()
+        val jsonObject = jsonContainer.json ?: return result
+        val coinKeySet = jsonObject.keySet()
+        for (coinKey in coinKeySet) {
+            val currencyJson = jsonObject.getAsJsonObject(coinKey)
+            val currencyKeySet = currencyJson.keySet()
             for (currencyKey in currencyKeySet) {
-                val topCoin = Gson().fromJson(
-                    jsonObject.getAsJsonObject(currencyKey),
-                    TopCoinDto::class.java
+                val priceInfo = Gson().fromJson(
+                    currencyJson.getAsJsonObject(currencyKey),
+                    CoinDto::class.java
                 )
-                result.add(topCoin)
+                result.add(priceInfo)
             }
         }
         return result
     }
 
-    fun mapTopCoinDbModelToEntity(topCoinDbModel: TopCoinDbModel) = TopCoin(
-        fromSymbol = topCoinDbModel.fromSymbol,
-        toSymbol = topCoinDbModel.toSymbol,
-        price = topCoinDbModel.price,
-        lastUpdate = getFormattedTime(topCoinDbModel.lastUpdate),
-        highDay = topCoinDbModel.highDay,
-        lowDay = topCoinDbModel.lowDay,
-        marketCap = topCoinDbModel.marketCap,
-        imageUrl = topCoinDbModel.imageUrl
+    fun mapNamesListToString(namesList: TopCoinsListDto) =
+        namesList.data?.map { it.coinName?.name }?.joinToString(",") ?: ""
+
+    fun mapTopCoinDbModelToEntity(coinDbModel: CoinDbModel) = Coin(
+        fromSymbol = coinDbModel.fromSymbol,
+        toSymbol = coinDbModel.toSymbol,
+        price = coinDbModel.price,
+        lastUpdate = getFormattedTime(coinDbModel.lastUpdate),
+        highDay = coinDbModel.highDay,
+        lowDay = coinDbModel.lowDay,
+        marketCap = coinDbModel.marketCap,
+        imageUrl = coinDbModel.imageUrl
     )
 
     private fun getFormattedTime(timestamp: Long): String {

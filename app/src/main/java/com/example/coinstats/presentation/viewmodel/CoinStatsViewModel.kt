@@ -16,7 +16,9 @@ class CoinStatsViewModel(application: Application) : AndroidViewModel(applicatio
     private val getTopCoinListUseCase = GetTopCoinListUseCase(repository)
     private val loadDataUseCase = LoadDataUseCase(repository)
 
-    init {
+    val list = getTopCoinListUseCase()
+
+    fun loadData() {
         viewModelScope.launch {
             loadDataUseCase()
         }
